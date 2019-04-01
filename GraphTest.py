@@ -144,7 +144,7 @@ def MakeGraphs():
 
 #https://plot.ly/python/reference/#layout
 #bg: rgb(17,17,17) nuance=160, luminance=16, saturation=0
-def CreateLayout(title, xTitle, yTitle, barmodeVal=''):
+def CreateLayout(title, xTitle, yTitle, barmodeVal='', darkTheme=True):
     layout = go.Layout(
         title=dict(
             text=MakeTitle(title, 10),
@@ -170,7 +170,8 @@ def CreateLayout(title, xTitle, yTitle, barmodeVal=''):
     )
     if barmodeVal != '':
         layout['barmode']=barmodeVal
-    layout['template'] = 'plotly_dark'
+    if darkTheme:
+        layout['template'] = 'plotly_dark'
     return layout
 
 def MakeTitle(date, span):
@@ -181,7 +182,7 @@ def MakeTitle(date, span):
 
 
 def main():
-    #Requirements. Start Date, Span
+    #Requirements. Start Date, Span, dark theme
     MakeGraphs()
   
 if __name__== "__main__":
