@@ -142,10 +142,15 @@ def MakeGraphs():
     MakeStackedAreaGraph(data, False)
     MakeStackedAreaGraph(data, True)
 
-
+#https://plot.ly/python/reference/#layout
+#bg: rgb(17,17,17) nuance=160, luminance=16, saturation=0
 def CreateLayout(title, xTitle, yTitle, barmodeVal=''):
     layout = go.Layout(
-        title=MakeTitle(title, 10),
+        title=dict(
+            text=MakeTitle(title, 10),
+            x=0.5,
+        ),
+        hovermode='x',
         xaxis=dict(
             title=xTitle,
             titlefont=dict(
@@ -165,6 +170,7 @@ def CreateLayout(title, xTitle, yTitle, barmodeVal=''):
     )
     if barmodeVal != '':
         layout['barmode']=barmodeVal
+    layout['template'] = 'plotly_dark'
     return layout
 
 def MakeTitle(date, span):
