@@ -111,7 +111,7 @@ def MakeBarGraph(d, percent=False):
 
     layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel, 'stack')
     fig = go.Figure(data=traces, layout=layout)
-    py.plot(fig, filename=fileName)
+    py.plot(fig, filename=fileName, auto_open=False)
 
 def NewYvalues(yValues, sums):
     newyValues = []
@@ -122,10 +122,10 @@ def NewYvalues(yValues, sums):
 def MakeStackedAreaGraph(d, percent=False):
     traces = []
     yAxisLabel = 'Number of Tests'
-    fileName = 'Stacked-area.html'
+    fileName = 'Stacked-Area.html'
     if percent:
         yAxisLabel = '% of Tests'
-        fileName = 'Stacked-area-percent.html'
+        fileName = 'Stacked-Area-Percent.html'
 
     for i in range(0, len(d.tests)):
         temp = CreateStackedAreaTrace(d.dates, d.allTests[d.tests[i]],d.tests[i],d.colors[i], percent)
@@ -133,7 +133,7 @@ def MakeStackedAreaGraph(d, percent=False):
 
     layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel)
     fig = go.Figure(data=traces, layout=layout)
-    py.plot(fig, filename=fileName)
+    py.plot(fig, filename=fileName, auto_open=False)
 
 def MakeGraphs():
     data = CreateFauxData()
