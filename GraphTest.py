@@ -28,26 +28,9 @@ def CreateFauxData():
             allTests[tests[j]].append(temp[j])
             allTests['sum'].append(sum(temp))
 
-    # for i in range(0, len(tests)):
-    #     #temp = CreateStackedAreaTrace(dates,allTests[tests[i]], tests[i], colors[i])
-    #     temp = CreateStackedAreaPercentTrace(dates,allTests[tests[i]], tests[i], colors[i])
-    #     #temp = CreateStackedBarTrace(dates,allTests[tests[i]], tests[i], colors[i])
-    #     traces.append(temp)
-
-    #return traces
     return Data(dates, allTests, tests, colors)
 
-def CreateTrace0(xValues, yValues, nameValue):
-    trace = go.Scatter(
-        x=xValues,
-        y=yValues,
-        fill='tozeroy',
-        name=nameValue,
-        opacity=0,
-    )
-    return trace
-
-def CreateStackedAreaPercentTrace(xValues, yValues, nameValue, colorValue):
+def CreateStackedAreaTrace(xValues, yValues, nameValue, colorValue, percent=False):
     trace = dict(
         x=xValues,
         y=yValues,
@@ -57,7 +40,7 @@ def CreateStackedAreaPercentTrace(xValues, yValues, nameValue, colorValue):
         mode='lines', #'lines', 'markers', 'text', or none
         stackgroup='one',
         marker = dict(
-            #color = colorValue,
+            color = colorValue,
             #size = 120,
             # line = dict(
             #   color = colorValue,
@@ -68,37 +51,14 @@ def CreateStackedAreaPercentTrace(xValues, yValues, nameValue, colorValue):
             color = colorValue,
             width = 0,
         ),
-        groupnorm='percent',
         opacity=0,
     )
+    if percent:
+        trace['groupnorm'] = 'percent'
+
     return trace
 
-def CreateStackedAreaTrace(xValues, yValues, nameValue, colorValue):
-    trace = dict(
-        x=xValues,
-        y=yValues,
-        name = nameValue,
-        hoverinfo='x+y',
-        mode='lines', #'lines', 'markers', 'text', or none
-        stackgroup='one',
-        marker = dict(
-            #color = colorValue,
-            #size = 120,
-            # line = dict(
-            #   color = colorValue,
-            #   width = 12
-            # )
-        ),
-        line = dict(
-            color = colorValue,
-            width = 0),
-        groupnorm='percent',
-        opacity=0,
-    )
-    return trace
-
-
-def CreateStackedBarTrace(xValues, yValues, nameValue, colorValue, textVal):
+def CreateBarTrace(xValues, yValues, nameValue, colorValue, textVal):
     trace = go.Bar(
         x=xValues,
         y=yValues,
@@ -136,7 +96,7 @@ def MakeBarGraph(d, percent=False):
     fileName = 'Tests-Bar.html'
 
     if percent:
-        yAxisLabel = '%% of Tests'
+        yAxisLabel = '% of Tests'
         fileName = 'Tests-Bar-Percent.html'
     
     #Make the traces
@@ -144,51 +104,46 @@ def MakeBarGraph(d, percent=False):
         temp = None
         if percent:
             yValues = NewYvalues(d.allTests[d.tests[i]], d.allTests['sum'])
-            temp = CreateStackedBarTrace(d.dates, yValues,d.tests[i],d.colors[i], d.allTests[d.tests[i]])
+            temp = CreateBarTrace(d.dates, yValues,d.tests[i],d.colors[i], d.allTests[d.tests[i]])
         else:
-            temp = CreateStackedBarTrace(d.dates, d.allTests[d.tests[i]],d.tests[i],d.colors[i], d.allTests[d.tests[i]])
+            temp = CreateBarTrace(d.dates, d.allTests[d.tests[i]],d.tests[i],d.colors[i], d.allTests[d.tests[i]])
         traces.append(temp)
 
-    layout = CreateLayoutBar('2019/28/03', 'Dates', yAxisLabel)
+    layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel, 'stack')
     fig = go.Figure(data=traces, layout=layout)
     py.plot(fig, filename=fileName)
 
 def NewYvalues(yValues, sums):
     newyValues = []
     for i in range(0, len(yValues)):
-        newyValues.append(yValues[i] / sums[i])
+        newyValues.append((yValues[i] / sums[i])*100)
     return newyValues
+
+def MakeStackedAreaGraph(d, percent=False):
+    traces = []
+    yAxisLabel = 'Number of Tests'
+    fileName = 'Stacked-area.html'
+    if percent:
+        yAxisLabel = '% of Tests'
+        fileName = 'Stacked-area-percent.html'
+
+    for i in range(0, len(d.tests)):
+        temp = CreateStackedAreaTrace(d.dates, d.allTests[d.tests[i]],d.tests[i],d.colors[i], percent)
+        traces.append(temp)
+
+    layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel)
+    fig = go.Figure(data=traces, layout=layout)
+    py.plot(fig, filename=fileName)
 
 def MakeGraphs():
     data = CreateFauxData()
-    #MakeBarGraph(data, True)
-    #MakeBarGraph(data, False)
-    
+    MakeBarGraph(data, True)
+    MakeBarGraph(data, False)
+    MakeStackedAreaGraph(data, False)
+    MakeStackedAreaGraph(data, True)
 
-def CreateLayoutBar(title, xTitle, yTitle, barmodeVal='stack'):
-    layout = go.Layout(
-        barmode=barmodeVal, #Not in a stacked area graph
-        title=MakeTitle('2019/28/03', 10),
-        xaxis=dict(
-            title=xTitle,
-            titlefont=dict(
-                family='Courier New, monospace',
-                size=18,
-                color='#7f7f7f'
-            )
-        ),
-        yaxis=dict(
-            title=yTitle,
-            titlefont=dict(
-                family='Courier New, monospace',
-                size=18,
-                color='#7f7f7f'
-            )
-        )
-    )
-    return layout
 
-def CreateLayoutGraph(title, xTitle, yTitle):
+def CreateLayout(title, xTitle, yTitle, barmodeVal=''):
     layout = go.Layout(
         title=MakeTitle(title, 10),
         xaxis=dict(
@@ -208,6 +163,8 @@ def CreateLayoutGraph(title, xTitle, yTitle):
             )
         )
     )
+    if barmodeVal != '':
+        layout['barmode']=barmodeVal
     return layout
 
 def MakeTitle(date, span):
@@ -219,9 +176,6 @@ def MakeTitle(date, span):
 
 def main():
     #Requirements. Start Date, Span
-    #temp = CreateData()
-    #print(temp.dates)
-    #MakeBarGraph()
     MakeGraphs()
   
 if __name__== "__main__":
