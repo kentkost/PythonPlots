@@ -8,6 +8,7 @@ from collections import namedtuple
 #note. remove boundary line to have perfect color. But maybe put in markers
 #https://plot.ly/python/filled-area-plots/
 
+#Creates Faux data to test the plotting methods
 def CreateFauxData():
     startDate = 28
     allTests = {} #Referenced by the keys in the variable tests
@@ -75,6 +76,7 @@ def CreateBarTrace(xValues, yValues, nameValue, colorValue, textVal):
     )
     return trace
 
+#Creates dates array to be used in faux data
 def CreateDates(date):
     dates = []
     for i in range(0, 10):
@@ -84,6 +86,7 @@ def CreateDates(date):
     dates.reverse()
     return dates
 
+#Creates faux data for one day of testing
 def CreateFauxTestDayData(numberOfTests):
     p = random.randint(0, numberOfTests)
     s = random.randint(0, numberOfTests-p)
@@ -113,6 +116,7 @@ def MakeBarGraph(d, percent=False):
     fig = go.Figure(data=traces, layout=layout)
     py.plot(fig, filename=fileName, auto_open=False)
 
+#New Y-values because stacked bar plot doesn't have an attribute groupnom=percent.
 def NewYvalues(yValues, sums):
     newyValues = []
     for i in range(0, len(yValues)):
@@ -143,7 +147,7 @@ def MakeGraphs():
     MakeStackedAreaGraph(data, True)
 
 #https://plot.ly/python/reference/#layout
-#bg: rgb(17,17,17) nuance=160, luminance=16, saturation=0
+#bg: rgb(17,17,17) nuance=160, luminance=16, saturation=0. Colour used to seamlessly colour the background in html. abandoned
 def CreateLayout(title, xTitle, yTitle, barmodeVal='', darkTheme=True):
     layout = go.Layout(
         title=dict(
