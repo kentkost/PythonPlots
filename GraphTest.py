@@ -20,7 +20,7 @@ def CreateFauxData():
 
     for i in range(0, len(tests)):
         allTests[tests[i]] = []
-        allTests['sum'] = []
+        allTests['sum'] = [] #used to get the percentage since barplots can't do them.
 
     for i in range(0, len(dates)):
         #temp = CreateFauxTestDayData(random.randint(1100, 1700))
@@ -115,6 +115,7 @@ def MakeBarGraph(d, percent=False):
     layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel, 'stack')
     fig = go.Figure(data=traces, layout=layout)
     py.plot(fig, filename=fileName, auto_open=False)
+    #py.plot(fig, filename=fileName, image='svg', auto_open=False)
 
 #New Y-values because stacked bar plot doesn't have an attribute groupnom=percent.
 def NewYvalues(yValues, sums):
@@ -138,6 +139,7 @@ def MakeStackedAreaGraph(d, percent=False):
     layout = CreateLayout('2019/28/03', 'Dates', yAxisLabel)
     fig = go.Figure(data=traces, layout=layout)
     py.plot(fig, filename=fileName, auto_open=False)
+    #py.plot(fig, filename=fileName, image='svg', auto_open=False)
 
 def MakeGraphs():
     data = CreateFauxData()
